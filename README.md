@@ -1,37 +1,63 @@
 # Around The U.S.
 
-Around The U.S. es una galería interactiva de lugares desarrollada como parte
-del sprint 6 de TripleTen. El proyecto trabaja con datos en JavaScript,
-plantillas HTML y modales para crear una experiencia dinámica en el navegador.
+Around The U.S. es una galeria interactiva de lugares desarrollada como parte
+de los sprints 6 y 7 de TripleTen. El proyecto usa HTML, CSS y JavaScript
+modular para renderizar tarjetas, trabajar con ventanas emergentes y validar
+formularios en el navegador.
 
-## Descripción
+## Descripcion
 
-La página muestra un perfil de usuario y una colección de tarjetas con imágenes
+La pagina muestra un perfil de usuario y una coleccion de tarjetas con imagenes
 de distintos lugares. Las tarjetas iniciales se generan desde un array de
-objetos en JavaScript, lo que permite mantener los datos separados del marcado
-HTML.
+objetos en JavaScript y se crean a partir de un elemento `<template>`.
 
-El usuario puede editar la información del perfil, agregar nuevas tarjetas,
+El usuario puede editar la informacion del perfil, agregar nuevas tarjetas,
 marcar tarjetas con "Me gusta", eliminar tarjetas y abrir una vista ampliada de
 cada imagen.
 
 ## Funcionalidades
 
-- Renderizado dinámico de tarjetas desde un array de datos.
-- Uso de un elemento `<template>` para crear nuevas tarjetas.
-- Valores predeterminados para tarjetas con datos incompletos.
-- Edición del nombre y la descripción del perfil.
-- Apertura y cierre de ventanas emergentes reutilizando funciones comunes.
-- Agregado de nuevas tarjetas mediante un formulario.
-- Botón "Me gusta" interactivo en cada tarjeta.
-- Eliminación de tarjetas desde el DOM.
-- Vista ampliada de imágenes en un modal.
+- Renderizado dinamico de 6 tarjetas iniciales desde JavaScript.
+- Creacion de tarjetas con un elemento `<template>`.
+- Edicion del nombre y la descripcion del perfil.
+- Agregado de nuevas tarjetas mediante formulario.
+- Boton "Me gusta" interactivo en cada tarjeta.
+- Eliminacion de tarjetas desde el DOM.
+- Vista ampliada de imagenes en una ventana emergente.
+- Cierre de ventanas emergentes con el boton de cierre.
+- Cierre de ventanas emergentes al hacer clic en la superposicion.
+- Cierre de ventanas emergentes al pulsar la tecla `Esc`.
+- Validacion del formulario "Editar perfil".
+- Validacion del formulario "Nuevo lugar".
+- Mensajes de error nativos del navegador.
+- Botones de envio inactivos cuando un formulario no es valido.
+- Codigo de validacion separado en `scripts/validate.js`.
+- JavaScript conectado como modulo desde `index.html`.
 
-## Tecnologías
+## Validacion de formularios
+
+El formulario "Editar perfil" valida:
+
+- Nombre obligatorio.
+- Nombre entre 2 y 40 caracteres.
+- Acerca de obligatorio.
+- Acerca de entre 2 y 200 caracteres.
+
+El formulario "Nuevo lugar" valida:
+
+- Titulo obligatorio.
+- Titulo entre 2 y 30 caracteres.
+- URL de imagen obligatoria.
+- URL de imagen con formato valido.
+
+La validacion utiliza atributos HTML5, `ValidityState` y funciones reutilizables
+exportadas desde `scripts/validate.js`.
+
+## Tecnologias
 
 - HTML5
 - CSS3
-- JavaScript
+- JavaScript modular
 - BEM
 - Flexbox
 - CSS Grid
@@ -42,19 +68,34 @@ cada imagen.
 
 ```text
 web_project_around_es/
-├── blocks/        # Archivos CSS organizados por bloques BEM
-├── images/        # Imágenes e iconos del proyecto
-├── pages/         # Archivo CSS principal
-├── scripts/       # Código JavaScript
-├── vendor/        # Normalize.css y fuentes
-├── index.html
-└── README.md
+|-- blocks/        # Archivos CSS organizados por bloques BEM
+|-- images/        # Imagenes e iconos del proyecto
+|-- pages/         # Archivo CSS principal
+|-- scripts/       # Codigo JavaScript
+|   |-- index.js
+|   `-- validate.js
+|-- vendor/        # Normalize.css y fuentes
+|-- index.html
+`-- README.md
 ```
 
-## Cómo ejecutar el proyecto
+## Como ejecutar el proyecto
 
-Puedes abrir el archivo `index.html` directamente en el navegador o visitar la
-versión publicada en GitHub Pages.
+Como el proyecto usa JavaScript modular (`type="module"`), no debe abrirse con
+doble clic como archivo local. Ejecuta un servidor local desde la carpeta del
+proyecto:
+
+```powershell
+python -m http.server 5500
+```
+
+Luego abre esta URL en el navegador:
+
+```text
+http://127.0.0.1:5500/index.html
+```
+
+Tambien puedes visitar la version publicada en GitHub Pages.
 
 ## Enlace al proyecto
 
