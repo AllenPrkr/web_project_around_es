@@ -44,6 +44,7 @@ const profileAddButton = document.querySelector(".profile__add-button");
 const newCardModal = document.querySelector("#new-card-popup");
 const newCardForm = newCardModal.querySelector("#new-card-form");
 const newCardCloseButton = newCardModal.querySelector(".popup__close");
+const newCardSubmitButton = newCardForm.querySelector(".popup__button");
 const newCardNameInput = newCardModal.querySelector(
   ".popup__input_type_card-name"
 );
@@ -134,9 +135,15 @@ function handleProfileFormSubmit(evt) {
 
 function handleCardFormSubmit(evt) {
   evt.preventDefault();
+
+  if (!newCardForm.checkValidity()) {
+    return;
+  }
+
   renderCard(newCardNameInput.value, newCardLinkInput.value, cardList);
   closeModal(newCardModal);
   newCardForm.reset();
+  resetValidation(newCardForm, newCardSubmitButton, validationSettings);
 }
 
 function showInputError(formElement, inputElement, errorMessage, settings) {
@@ -210,6 +217,7 @@ function setEventListeners(formElement, settings) {
 }
 
 setEventListeners(editProfileForm, validationSettings);
+setEventListeners(newCardForm, validationSettings);
 
 profileEditButton.addEventListener("click", handleOpenEditModal);
 
@@ -220,6 +228,7 @@ editProfileCloseButton.addEventListener("click", () => {
 editProfileForm.addEventListener("submit", handleProfileFormSubmit);
 
 profileAddButton.addEventListener("click", () => {
+  resetValidation(newCardForm, newCardSubmitButton, validationSettings);
   openModal(newCardModal);
 });
 
