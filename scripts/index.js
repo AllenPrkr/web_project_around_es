@@ -28,6 +28,7 @@ const initialCards = [
 const profileEditButton = document.querySelector(".profile__edit-button");
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+const popups = document.querySelectorAll(".popup");
 const editProfileModal = document.querySelector("#edit-popup");
 const editProfileForm = editProfileModal.querySelector("#edit-profile-form");
 const editProfileCloseButton =
@@ -69,6 +70,12 @@ function openModal(modal) {
 
 function closeModal(modal) {
   modal.classList.remove("popup_is-opened");
+}
+
+function handleOverlayClick(evt) {
+  if (evt.target === evt.currentTarget) {
+    closeModal(evt.currentTarget);
+  }
 }
 
 function handleLikeButtonClick(evt) {
@@ -218,6 +225,10 @@ function setEventListeners(formElement, settings) {
 
 setEventListeners(editProfileForm, validationSettings);
 setEventListeners(newCardForm, validationSettings);
+
+popups.forEach((popup) => {
+  popup.addEventListener("click", handleOverlayClick);
+});
 
 profileEditButton.addEventListener("click", handleOpenEditModal);
 
