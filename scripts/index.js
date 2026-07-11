@@ -32,6 +32,8 @@ const editProfileModal = document.querySelector("#edit-popup");
 const editProfileForm = editProfileModal.querySelector("#edit-profile-form");
 const editProfileCloseButton =
   editProfileModal.querySelector(".popup__close");
+const editProfileSubmitButton =
+  editProfileForm.querySelector(".popup__button");
 const profileNameInput = editProfileModal.querySelector(
   ".popup__input_type_name"
 );
@@ -52,6 +54,13 @@ const imageModalImage = imageModal.querySelector(".popup__image");
 const imageModalCaption = imageModal.querySelector(".popup__caption");
 const cardList = document.querySelector(".cards__list");
 const cardTemplate = document.querySelector("#card-template").content;
+const validationSettings = {
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__input-error_active",
+};
 
 function openModal(modal) {
   modal.classList.add("popup_is-opened");
@@ -107,11 +116,17 @@ function fillProfileForm() {
 
 function handleOpenEditModal() {
   fillProfileForm();
+  resetValidation(editProfileForm, editProfileSubmitButton, validationSettings);
   openModal(editProfileModal);
 }
 
 function handleProfileFormSubmit(evt) {
   evt.preventDefault();
+
+  if (!editProfileForm.checkValidity()) {
+    return;
+  }
+
   profileTitle.textContent = profileNameInput.value;
   profileDescription.textContent = profileDescriptionInput.value;
   closeModal(editProfileModal);
@@ -123,6 +138,78 @@ function handleCardFormSubmit(evt) {
   closeModal(newCardModal);
   newCardForm.reset();
 }
+
+function showInputError(formElement, inputElement, errorMessage, settings) {
+  const errorElement = formElement.querySelector(`#${inputElement.id}-error`);
+
+  inputElement.classList.add(settings.inputErrorClass);
+  errorElement.textContent = errorMessage;
+  errorElement.classList.add(settings.errorClass);
+}
+
+function hideInputError(formElement, inputElement, settings) {
+  const errorElement = formElement.querySelector(`#${inputElement.id}-error`);
+
+  inputElement.classList.remove(settings.inputErrorClass);
+  errorElement.textContent = "";
+  errorElement.classList.remove(settings.errorClass);
+}
+
+function checkInputValidity(formElement, inputElement, settings) {
+  if (!inputElement.validity.valid) {
+    showInputError(
+      formElement,
+      inputElement,
+      inputElement.validationMessage,
+      settings
+    );
+  } else {
+    hideInputError(formElement, inputElement, settings);
+  }
+}
+
+function hasInvalidInput(inputList) {
+  return inputList.some((inputElement) => !inputElement.validity.valid);
+}
+
+function toggleButtonState(inputList, buttonElement, settings) {
+  if (hasInvalidInput(inputList)) {
+    buttonElement.classList.add(settings.inactiveButtonClass);
+    buttonElement.disabled = true;
+  } else {
+    buttonElement.classList.remove(settings.inactiveButtonClass);
+    buttonElement.disabled = false;
+  }
+}
+
+function resetValidation(formElement, buttonElement, settings) {
+  const inputList = Array.from(
+    formElement.querySelectorAll(settings.inputSelector)
+  );
+
+  inputList.forEach((inputElement) => {
+    hideInputError(formElement, inputElement, settings);
+  });
+  toggleButtonState(inputList, buttonElement, settings);
+}
+
+function setEventListeners(formElement, settings) {
+  const inputList = Array.from(
+    formElement.querySelectorAll(settings.inputSelector)
+  );
+  const buttonElement = formElement.querySelector(settings.submitButtonSelector);
+
+  toggleButtonState(inputList, buttonElement, settings);
+
+  inputList.forEach((inputElement) => {
+    inputElement.addEventListener("input", () => {
+      checkInputValidity(formElement, inputElement, settings);
+      toggleButtonState(inputList, buttonElement, settings);
+    });
+  });
+}
+
+setEventListeners(editProfileForm, validationSettings);
 
 profileEditButton.addEventListener("click", handleOpenEditModal);
 
