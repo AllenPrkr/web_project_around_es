@@ -1,7 +1,7 @@
 import { Popup } from "./Popup.js";
-import type { CardData } from "./Card.js";
+import type { CardPreviewData } from "./Card.js";
 
-export class PopupWithImage extends Popup<CardData> {
+export class PopupWithImage extends Popup<CardPreviewData> {
   private readonly popupImage: HTMLImageElement;
   private readonly popupCaption: HTMLElement;
 
@@ -21,7 +21,7 @@ export class PopupWithImage extends Popup<CardData> {
     this.popupCaption = popupCaption;
   }
 
-  public override open(data: CardData): void {
+  public override open(data: CardPreviewData): void {
     this.popupImage.src = data.link;
     this.popupImage.alt = data.name;
     this.popupCaption.textContent = data.name;

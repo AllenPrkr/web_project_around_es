@@ -1,8 +1,9 @@
 export class Card {
-    constructor(data, templateSelector, handleCardClick) {
+    constructor(data, templateSelector, currentUserId, callbacks) {
         this.data = data;
         this.templateSelector = templateSelector;
-        this.handleCardClick = handleCardClick;
+        this.currentUserId = currentUserId;
+        this.callbacks = callbacks;
     }
     getTemplate() {
         var _a;
@@ -14,30 +15,48 @@ export class Card {
         return card;
     }
     setEventListeners() {
-        const likeButton = this.cardElement.querySelector(".card__like-button");
         const deleteButton = this.cardElement.querySelector(".card__delete-button");
-        likeButton === null || likeButton === void 0 ? void 0 : likeButton.addEventListener("click", () => {
-            likeButton.classList.toggle("card__like-button_is-active");
+        this.likeButton.addEventListener("click", () => {
+            this.callbacks.handleLikeClick(this.data._id, this.isLiked(), this);
         });
-        deleteButton === null || deleteButton === void 0 ? void 0 : deleteButton.addEventListener("click", () => {
-            this.cardElement.remove();
-        });
+        if (this.data.owner === this.currentUserId) {
+            deleteButton === null || deleteButton === void 0 ? void 0 : deleteButton.addEventListener("click", () => {
+                this.callbacks.handleDeleteClick(this.data._id, this);
+            });
+        }
+        else {
+            deleteButton === null || deleteButton === void 0 ? void 0 : deleteButton.remove();
+        }
         this.cardImage.addEventListener("click", () => {
-            this.handleCardClick(this.data);
+            this.callbacks.handleCardClick(this.data);
         });
     }
     generateCard() {
         this.cardElement = this.getTemplate();
         const cardTitle = this.cardElement.querySelector(".card__title");
         const cardImage = this.cardElement.querySelector(".card__image");
-        if (!cardTitle || !cardImage) {
+        const likeButton = this.cardElement.querySelector(".card__like-button");
+        if (!cardTitle || !cardImage || !likeButton) {
             throw new Error("La plantilla de tarjeta está incompleta.");
         }
         this.cardImage = cardImage;
+        this.likeButton = likeButton;
         cardTitle.textContent = this.data.name;
         this.cardImage.src = this.data.link;
         this.cardImage.alt = this.data.name;
+        this.setLikeState(this.data.isLiked);
         this.setEventListeners();
         return this.cardElement;
+    }
+    isLiked() {
+        return this.likeButton.classList.contains("card__like-button_is-active");
+    }
+    setLikeState(isLiked) {
+        this.data.isLiked = isLiked;
+        this.likeButton.classList.toggle("card__like-button_is-active", isLiked);
+        this.likeButton.setAttribute("aria-pressed", String(isLiked));
+    }
+    remove() {
+        this.cardElement.remove();
     }
 }

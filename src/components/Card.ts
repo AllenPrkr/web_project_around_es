@@ -1,25 +1,44 @@
-export interface CardData {
+export interface CardFormData {
   name: string;
   link: string;
 }
 
-export type CardClickHandler = (card: CardData) => void;
+export interface CardData {
+  _id: string;
+  name: string;
+  link: string;
+  owner: string;
+  isLiked: boolean;
+  createdAt: string;
+}
+
+export type CardPreviewData = Pick<CardData, "name" | "link">;
+
+export interface CardCallbacks {
+  handleCardClick: (card: CardPreviewData) => void;
+  handleDeleteClick: (cardId: string, card: Card) => void;
+  handleLikeClick: (cardId: string, isLiked: boolean, card: Card) => void;
+}
 
 export class Card {
   private readonly data: CardData;
   private readonly templateSelector: string;
-  private readonly handleCardClick: CardClickHandler;
+  private readonly currentUserId: string;
+  private readonly callbacks: CardCallbacks;
   private cardElement!: HTMLElement;
   private cardImage!: HTMLImageElement;
+  private likeButton!: HTMLButtonElement;
 
   constructor(
     data: CardData,
     templateSelector: string,
-    handleCardClick: CardClickHandler,
+    currentUserId: string,
+    callbacks: CardCallbacks,
   ) {
     this.data = data;
     this.templateSelector = templateSelector;
-    this.handleCardClick = handleCardClick;
+    this.currentUserId = currentUserId;
+    this.callbacks = callbacks;
   }
 
   private getTemplate(): HTMLElement {
@@ -38,23 +57,24 @@ export class Card {
   }
 
   private setEventListeners(): void {
-    const likeButton = this.cardElement.querySelector<HTMLButtonElement>(
-      ".card__like-button",
-    );
     const deleteButton = this.cardElement.querySelector<HTMLButtonElement>(
       ".card__delete-button",
     );
 
-    likeButton?.addEventListener("click", () => {
-      likeButton.classList.toggle("card__like-button_is-active");
+    this.likeButton.addEventListener("click", () => {
+      this.callbacks.handleLikeClick(this.data._id, this.isLiked(), this);
     });
 
-    deleteButton?.addEventListener("click", () => {
-      this.cardElement.remove();
-    });
+    if (this.data.owner === this.currentUserId) {
+      deleteButton?.addEventListener("click", () => {
+        this.callbacks.handleDeleteClick(this.data._id, this);
+      });
+    } else {
+      deleteButton?.remove();
+    }
 
     this.cardImage.addEventListener("click", () => {
-      this.handleCardClick(this.data);
+      this.callbacks.handleCardClick(this.data);
     });
   }
 
@@ -67,17 +87,36 @@ export class Card {
     const cardImage = this.cardElement.querySelector<HTMLImageElement>(
       ".card__image",
     );
+    const likeButton = this.cardElement.querySelector<HTMLButtonElement>(
+      ".card__like-button",
+    );
 
-    if (!cardTitle || !cardImage) {
+    if (!cardTitle || !cardImage || !likeButton) {
       throw new Error("La plantilla de tarjeta está incompleta.");
     }
 
     this.cardImage = cardImage;
+    this.likeButton = likeButton;
     cardTitle.textContent = this.data.name;
     this.cardImage.src = this.data.link;
     this.cardImage.alt = this.data.name;
+    this.setLikeState(this.data.isLiked);
     this.setEventListeners();
 
     return this.cardElement;
+  }
+
+  public isLiked(): boolean {
+    return this.likeButton.classList.contains("card__like-button_is-active");
+  }
+
+  public setLikeState(isLiked: boolean): void {
+    this.data.isLiked = isLiked;
+    this.likeButton.classList.toggle("card__like-button_is-active", isLiked);
+    this.likeButton.setAttribute("aria-pressed", String(isLiked));
+  }
+
+  public remove(): void {
+    this.cardElement.remove();
   }
 }

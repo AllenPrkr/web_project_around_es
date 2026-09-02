@@ -1,15 +1,12 @@
 export interface SectionOptions<T> {
-  items: T[];
   renderer: (item: T) => void;
 }
 
 export class Section<T> {
-  private readonly items: T[];
   private readonly renderer: (item: T) => void;
   private readonly container: HTMLElement;
 
-  constructor({ items, renderer }: SectionOptions<T>, containerSelector: string) {
-    this.items = items;
+  constructor({ renderer }: SectionOptions<T>, containerSelector: string) {
     this.renderer = renderer;
 
     const container = document.querySelector<HTMLElement>(containerSelector);
@@ -21,11 +18,15 @@ export class Section<T> {
     this.container = container;
   }
 
-  public renderItems(): void {
-    [...this.items].reverse().forEach((item) => this.renderer(item));
+  public renderItems(items: T[]): void {
+    items.forEach((item) => this.renderer(item));
   }
 
   public addItem(element: HTMLElement): void {
     this.container.prepend(element);
+  }
+
+  public appendItem(element: HTMLElement): void {
+    this.container.append(element);
   }
 }

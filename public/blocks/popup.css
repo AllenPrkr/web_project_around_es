@@ -100,8 +100,9 @@
 
 .popup__input-error {
   display: block;
-  min-height: 30px;
-  margin-top: 5px;
+  min-height: 0;
+  height: 0;
+  margin-top: 0;
   color: #ff0000;
   font-size: 12px;
   line-height: 15px;
@@ -109,6 +110,9 @@
 }
 
 .popup__input-error_active {
+  min-height: 30px;
+  height: auto;
+  margin-top: 5px;
   visibility: visible;
 }
 
@@ -132,6 +136,22 @@
   background: transparent;
   border-radius: 0;
   padding: 0;
+}
+
+.popup__content_type_avatar {
+  min-height: 272px;
+}
+
+.popup__content_type_confirmation {
+  min-height: 181px;
+}
+
+.popup__content_type_confirmation .popup__form {
+  margin-top: 38px;
+}
+
+.popup__content_type_confirmation .popup__button {
+  margin-top: 0;
 }
 
 .popup__image {

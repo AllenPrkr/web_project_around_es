@@ -1,15 +1,19 @@
-# Alrededor de los EE. UU.
+# Alrededor de los EE. UU. — Sprint 9
 
-Galería interactiva de lugares desarrollada como proyecto de los sprints 6 a 8
-de TripleTen. La aplicación permite administrar la información de un perfil y
-una colección de tarjetas desde una interfaz adaptable.
+Galería interactiva de lugares desarrollada como proyecto de los sprints 6 a 9
+de TripleTen. La aplicación está conectada a la API de «Alrededor de los EE. UU.»
+para conservar el perfil y las tarjetas en el servidor.
 
 ## Funcionalidad
 
-- Renderiza seis tarjetas iniciales a partir de datos.
-- Permite agregar, eliminar y marcar tarjetas con «Me gusta».
+- Carga en paralelo el perfil y las tarjetas de la cuenta autenticada.
+- Permite agregar y eliminar tarjetas persistentes.
+- Solicita confirmación antes de eliminar una tarjeta propia.
+- Guarda y elimina «Me gusta» mediante la API.
 - Abre las imágenes en una ventana emergente con título y texto alternativo.
-- Permite editar el nombre y la descripción del perfil.
+- Permite editar el nombre, la descripción y el avatar del perfil.
+- Muestra estados de carga durante los envíos y conserva la interfaz si falla
+  una solicitud.
 - Cierra las ventanas emergentes mediante su botón, el fondo o la tecla `Esc`.
 - Valida los formularios en tiempo real y muestra mensajes de error.
 - Restablece la validación cada vez que se abre un formulario.
@@ -21,6 +25,7 @@ una colección de tarjetas desde una interfaz adaptable.
 - Metodología BEM
 - TypeScript con modo estricto
 - JavaScript modular (ES Modules)
+- Fetch API, promesas y solicitudes HTTP REST
 - Programación orientada a objetos
 - Encapsulamiento, herencia, composición y callbacks
 - Git y GitHub Pages
@@ -36,7 +41,10 @@ en una clase independiente:
 - `Popup`: comportamiento común de las ventanas emergentes.
 - `PopupWithImage`: presentación ampliada de una imagen.
 - `PopupWithForm`: lectura y envío de formularios.
+- `PopupWithConfirmation`: confirmación reutilizable para acciones destructivas.
 - `UserInfo`: lectura y actualización de los datos del perfil.
+- `Api`: acceso centralizado a todos los endpoints del servidor y manejo de
+  respuestas HTTP.
 
 Los archivos estáticos y la salida compilada se guardan en `public/`. El archivo
 `src/index.ts` crea las instancias, conecta sus callbacks y registra los eventos
@@ -66,13 +74,17 @@ Compila el proyecto desde la raíz:
 tsc
 ```
 
-Después, inicia un servidor local en la carpeta pública:
+Después, inicia el servidor local incluido en el proyecto:
 
 ```powershell
-python -m http.server 5500 --directory public
+node server.mjs
 ```
 
 Abre `http://127.0.0.1:5500/` en el navegador.
+
+> No abras `public/index.html` directamente desde el explorador de archivos.
+> Una dirección que empieza por `file://` no proporciona un origen HTTP válido
+> para las solicitudes a la API y puede dejar la galería vacía.
 
 ## Demo
 
